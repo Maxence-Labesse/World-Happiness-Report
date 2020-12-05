@@ -1,0 +1,130 @@
+import pandas as pd
+import numpy as np
+import folium
+from wordcloud import WordCloud, STOPWORDS
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+def country_map(data, country, value, location, zoom, template, legend, threshold_scale):
+    """
+    """
+    if threshold_scale == None:
+        # create a numpy array of length 6 and has linear spacing from the minium value to the maximum
+        threshold_scale = np.linspace(data[value].min(),
+                                      data[value].max(),
+                                      6, dtype=int)
+        threshold_scale = threshold_scale.tolist() # change the numpy array to a list
+        threshold_scale[-1] = threshold_scale[-1] + 1 # make sure that the last value of the list is greater than the maximum
+
+    # let Folium determine the scale.
+    world_map = folium.Map(location=location, 
+                           zoom_start=zoom, min_zoom=zoom, max_zoom=zoom,
+                           width=1000,height=600,
+                           tiles='Mapbox Bright', max_bounds=False)
+
+    # build the map
+    world_map.choropleth(
+        geo_data=template,
+        data=data,
+        columns=[country, value],
+        key_on='feature.properties.name',
+        threshold_scale=threshold_scale,
+        fill_color='PuBuGn', # https://github.com/python-visualization/folium/blob/v0.2.0/folium/utilities.py#L104
+        fill_opacity=0.7, 
+        line_opacity=0.2,
+        legend_name=legend,
+        reset=True
+    )
+    
+    display(world_map)
+    
+####################################
+
+def wordcloud_region(df, region, value):
+    """
+    """
+    #
+    df_temp = df.loc[df['region']==region]
+    df_temp.set_index("country", inplace=True)
+    
+    #
+    total_happiness = df_temp[value].sum()
+    
+    #
+    max_words = 90
+    word_string = ''
+    for country in df_temp.index.values:
+    # check if country's name is a single-word name
+        if len(country.split(' ')) == 1:
+            repeat_num_times = int(df_temp.loc[country, value]/float(total_happiness)*max_words)
+            word_string = word_string + ((country + ' ') * repeat_num_times)
+    wordcloud = WordCloud(background_color='white').generate(word_string)
+    
+    return wordcloud
+
+###
+
+def multiple_wordcloud_region(df, region_list ,value ):
+    """
+    """
+    # display the cloud
+    fig = plt.figure(figsize=(20,5))
+    j = 100+len(region_list)*10+1
+    
+    for r in region_list:
+        wordcloud = wordcloud_region(df, r, value)
+        plt.subplot(j)
+        plt.imshow(wordcloud, interpolation='bilinear')
+        j+=1
+        plt.axis('off')
+        plt.title(r, y=-0.3, fontsize=30)
+    plt.show()
+
+
+########################################
+def bar_reg(df, by, value, title):
+    """
+    """
+    df_tmp = df.groupby(by, axis=0).mean().sort_values(value, ascending=False)
+    df_tmp.reset_index(inplace=True)
+    df_tmp.rename(columns={"index":by},inplace=True)
+
+    s = df[by].value_counts().to_frame().rename(columns={by:"nb_countries"})
+    d = dict(zip(s.index.values,s["nb_countries"].tolist()))
+
+    norm = plt.Normalize(df_tmp[value].min(), df_tmp[value].max())
+    cmap = plt.get_cmap("PuBuGn")
+
+    g = sns.barplot(y=by, x=value, palette=cmap(norm(df_tmp[value].values)), data=df_tmp)
+    ylabels = [r+'   ('+str(d[r])+')' for r in df_tmp["region"].tolist()]
+    g.set_yticklabels(ylabels)
+    g.set(ylabel='region (number of countries)')
+    g.set_title(title)
+
+    plt.show()
+    
+    
+########################################
+def multiple_bar_chart(df, catvar, numvar_list, palette):
+    """
+    """
+    fig= plt.figure(figsize=(20,3))
+    plt.style.use('ggplot')
+    
+    i = 0
+    j = 161
+    
+    for l in numvar_list:
+        df_temp = df[[catvar,l]].groupby(catvar, axis=0).mean().sort_values(l, ascending=True)
+        df_temp.reset_index(inplace=True)
+    
+        plt.subplot(j)
+        plt.bar(catvar, l, width=0.8, bottom=None, data=df_temp.sort_values(by=catvar), color=palette[i])
+        plt.xticks(rotation=20)
+        plt.title(l, y=-0.3)
+        
+        j+=1
+        i+=1
+    
+    plt.show()
