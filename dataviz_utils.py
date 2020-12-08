@@ -41,7 +41,7 @@ def country_map(data, country, value, location, zoom, template, legend, threshol
     
 ####################################
 
-def wordcloud_region(df, region, value):
+def wordcloud_region(df, region, value, max_words):
     """
     """
     #
@@ -52,7 +52,6 @@ def wordcloud_region(df, region, value):
     total_happiness = df_temp[value].sum()
     
     #
-    max_words = 90
     word_string = ''
     for country in df_temp.index.values:
     # check if country's name is a single-word name
@@ -65,7 +64,7 @@ def wordcloud_region(df, region, value):
 
 ###
 
-def multiple_wordcloud_region(df, region_list ,value ):
+def multiple_wordcloud_region(df, region_list ,value, max_words ):
     """
     """
     # display the cloud
@@ -73,7 +72,7 @@ def multiple_wordcloud_region(df, region_list ,value ):
     j = 100+len(region_list)*10+1
     
     for r in region_list:
-        wordcloud = wordcloud_region(df, r, value)
+        wordcloud = wordcloud_region(df, r, value, max_words)
         plt.subplot(j)
         plt.imshow(wordcloud, interpolation='bilinear')
         j+=1
@@ -131,7 +130,7 @@ def multiple_bar_chart(df, catvar, numvar_list, palette):
     
     
 ############################################
-def numeric_th_graph(df, catvar, numvar, th):
+def numeric_th_graph(df, catvar, numvar, th, over_under="over"):
     """
     """
     plt.figure(figsize=(20,5))
@@ -139,14 +138,20 @@ def numeric_th_graph(df, catvar, numvar, th):
     plt.subplot(121)
     plot = sns.scatterplot(y="happiness_score", x=numvar, data=df, hue=catvar, 
                            palette= ['#F6EFF7', '#A6BDDB', '#3690C0', '#016450'])
-    plot.set_title("Distribution according to corruption_perception and happiness_score", y=1.1)
+    plot.set_title("Distribution according to "+numvar+" and happiness_score", y=1.1)
     plot.axvline(th,color='r')
     plt.legend(loc='lower right')
 
     plt.subplot(122)
-    df_high_corr = df[df[numvar]>th]
-    s = df_high_corr[catvar].value_counts(-1).rename(numvar).reset_index()
+    if over_under=="over":
+        df_high_corr = df[df[numvar]>th]
+    elif over_under=="under":
+        df_high_corr = df[df[numvar]<th]
+    
+    s = df_high_corr[catvar].value_counts(-1).rename(numvar).reset_index().sort_values("index", ascending=False)
     s.rename(columns={"index":"happiness",numvar:" "},inplace=True)
+    
+    
     s[" "].plot(kind='pie',
                                    figsize=(15, 6),
                                    autopct='%1.1f%%', 
@@ -159,7 +164,10 @@ def numeric_th_graph(df, catvar, numvar, th):
                                   )
 
     # scale the title up by 12% to match pctdistance
-    plt.title('Happiness level for countries with coruption pereception >60', y=1.1) 
+    if over_under=="over":
+        plt.title('Happiness level for countries with '+numvar+'>'+str(th), y=1.1)
+    elif over_under=="under":
+        plt.title('Happiness level for countries with '+numvar+'<'+str(th), y=1.1)
     plt.axis('equal') 
 
     # add legend
