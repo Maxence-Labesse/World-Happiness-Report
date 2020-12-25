@@ -8,6 +8,33 @@ import seaborn as sns
 
 def country_map(data, country, value, location, zoom, template, legend, threshold_scale):
     """
+    Plots a world map with colored countries according to a variable value
+    
+    Parameters:
+    data: DataFrame
+        dataset
+        
+    country: string
+        name of the variable containing countries
+        
+    value: int
+        name of the variable to color countries
+        
+    location: [x,y]
+        map center
+        
+    zoom: float
+        map zoom
+        
+    template: .json file
+        map template to delimiter countries
+        
+    legend: string
+        legend name
+        
+    threshold_scale: list
+        value thresholds for countries colors
+        
     """
     if threshold_scale == None:
         # create a numpy array of length 6 and has linear spacing from the minium value to the maximum
@@ -43,6 +70,21 @@ def country_map(data, country, value, location, zoom, template, legend, threshol
 
 def wordcloud_region(df, region, value, max_words):
     """
+    Plots a wordclound according to a variable value for a selected region
+    
+    Parameters
+    ----------
+    df : DataFrame
+        dataset
+     
+    region: string
+        selected region name
+        
+    value: string
+        variable name
+        
+    max_words: ?
+        ?????
     """
     #
     df_temp = df.loc[df['region']==region]
@@ -66,6 +108,21 @@ def wordcloud_region(df, region, value, max_words):
 
 def multiple_wordcloud_region(df, region_list ,value, max_words ):
     """
+    Plots a wordclound according to a variable value for several regions
+    
+    Parameters
+    ----------
+    df : DataFrame
+        dataset
+     
+    region: list
+        selected regions names
+        
+    value: string
+        variable name
+        
+    max_words: ?
+        ?????
     """
     # display the cloud
     fig = plt.figure(figsize=(20,5))
@@ -84,6 +141,21 @@ def multiple_wordcloud_region(df, region_list ,value, max_words ):
 ########################################
 def bar_reg(df, by, value, title):
     """
+    Plots variable values for each categories of a categorical variable
+    
+    Adds the frequency of the categories in the dataset
+    
+    df: DataFrame
+        dataset
+        
+    by: string
+        categorical variable name
+        
+    value: string
+        variable
+        
+    title: string
+        graph title
     """
     df_tmp = df.groupby(by, axis=0).mean().sort_values(value, ascending=False)
     df_tmp.reset_index(inplace=True)
@@ -107,6 +179,21 @@ def bar_reg(df, by, value, title):
 ########################################
 def multiple_bar_chart(df, catvar, numvar_list, palette):
     """
+    for a selection of numerical variables: 
+    Plots variable values for each categories of a categorical variable 
+    
+    df: DataFrame
+        dataset
+        
+    catvar: string
+        categorical variable name
+        
+    numvar_lsit: list
+        list containing numerical variables names
+        
+    palette: list
+        color palette
+    
     """
     fig= plt.figure(figsize=(20,3))
     plt.style.use('ggplot')
@@ -132,6 +219,7 @@ def multiple_bar_chart(df, catvar, numvar_list, palette):
 ############################################
 def numeric_th_graph(df, catvar, numvar, th, over_under="over"):
     """
+    
     """
     plt.figure(figsize=(20,5))
     
@@ -165,9 +253,9 @@ def numeric_th_graph(df, catvar, numvar, th, over_under="over"):
 
     # scale the title up by 12% to match pctdistance
     if over_under=="over":
-        plt.title('Happiness level for countries with '+numvar+'>'+str(th), y=1.1)
+        plt.title('Happiness level for countries with '+numvar+' >'+str(th), y=1.1)
     elif over_under=="under":
-        plt.title('Happiness level for countries with '+numvar+'<'+str(th), y=1.1)
+        plt.title('Happiness level for countries with '+numvar+' <'+str(th), y=1.1)
     plt.axis('equal') 
 
     # add legend
