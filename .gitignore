@@ -1,6 +1,7 @@
-data/train_set.csv
-data/test_set.csv
-data/infer_set.csv
+data/fact_train_set.csv
+data/fact_test_set.csv
+data/hist_train_set.csv
+data/hist_test_set.csv
 data/data_clean.csv
 data/data_clean_norm.csv
 Test_forecasting.ipynb
