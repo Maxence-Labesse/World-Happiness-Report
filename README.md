@@ -1,6 +1,7 @@
 # World happiness report
 The **World Happiness Report** is a landmark survey of the state of global happiness from 2015 to 2019. The report has gained global recognition as governments, organizations and civil society increasingly use happiness indicators to inform their policy-making decisions. Leading experts across fields – economics, psychology, survey analysis, national statistics, health, public policy and more – describe how measurements of well-being can be used effectively to assess the progress of nations. The reports review the state of happiness in the world today and show how the new science of happiness explains personal and national variations in happiness.
 
+![image](data/happiness.png)
 
 
 # Data
@@ -51,11 +52,11 @@ In order to answer these questions in a structured and comprehensible way, we wi
 * **Machine Learning**: expertise in ML algorithms and their evaluation.
 
 
-# Information
-#### Author
-Maxence Labesse - maxence.labesse@yahoo.fr
+## Meta
 
-https://github.com/Maxence-Labesse/MLBG59
+LABESSE Maxence - maxence.labesse@yahoo.fr
 
-#### Contributors
+Distributed under the MIT license. See ``LICENSE`` for more information.
+
+[https://github.com/Maxence-Labesse/World-Happiness-Report]()
 
