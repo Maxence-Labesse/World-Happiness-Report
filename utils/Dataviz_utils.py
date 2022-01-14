@@ -48,7 +48,7 @@ def country_map(data, country, value, location, zoom, template, legend, threshol
     world_map = folium.Map(location=location, 
                            zoom_start=zoom, min_zoom=zoom, max_zoom=zoom,
                            width=1000,height=600,
-                           tiles='Mapbox Bright', max_bounds=False)
+                           tiles='Stamen Terrain', max_bounds=False)
 
     # build the map
     world_map.choropleth(
